@@ -27,3 +27,19 @@ nagios_nrpecheck "check_http" do
   parameters "-H #{node['nagios']['check_vhost']['server_name']} -I #{node['nagios']['check_vhost']['ipaddress']}"
   action :add
 end
+
+unless node.attribute?("apache2")
+    munin_plugin 'apache_accesses'
+    munin_plugin 'apache_volume'
+    munin_plugin 'apache_processes'
+end
+
+unless node.attribute?("nginx")
+    munin_plugin 'nginx_request'
+    munin_plugin 'nginx_status'
+end
+
+
+    
+
+
