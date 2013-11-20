@@ -70,7 +70,14 @@ Vagrant.configure("2") do |config|
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
 
+  # Allow omnibus
+  config.omnibus.chef_version = :latest
+
   config.vm.provision :chef_solo do |chef|
+
+    chef.data_bags_path = "#{ENV['HOME']}/git/chef-repo/data_bags"
+    chef.encrypted_data_bag_secret_key_path = "#{ENV['HOME']}/.chef/encrypted_data_bag_secret"
+
     chef.json = {
       :mysql => {
         :server_root_password => 'rootpass',
