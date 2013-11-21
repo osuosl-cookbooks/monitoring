@@ -19,6 +19,12 @@
 include_recipe "monitoring::http"
 include_recipe "apache2::mod_status"
 
+package "perl-Crypt-SSLeay" do
+    action :install
+end
+
+node.override["apache"]["ext_status"] = true
+
 munin_plugin 'apache_accesses'
 munin_plugin 'apache_volume'
 munin_plugin 'apache_processes'
