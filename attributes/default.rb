@@ -1,6 +1,8 @@
 default['nagios']['check_vhost']['server_name'] = node['fqdn']
 default['nagios']['check_vhost']['ipaddress'] = node['ipaddress']
 
+total_cpu = node['cpu']['total']
+
 # Override the defaults for our environment, specifically redhat systems.
 default['nagios']['client']['install_method'] = "package"
 case node['platform_family']
@@ -21,3 +23,6 @@ when "rhel"
     "nagios-plugins-users"
   ]
 end
+
+default['nagios']['checks']['load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
+default['nagios']['checks']['load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"

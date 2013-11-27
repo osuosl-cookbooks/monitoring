@@ -20,8 +20,8 @@
 # Check for high load.  This check defines warning levels and attributes
 nagios_nrpecheck "check_load" do
   command "#{node['nagios']['plugin_dir']}/check_load"
-  warning_condition "6"
-  critical_condition "10"
+  warning_condition node['nagios']['checks']['load']['warning']
+  critical_condition node['nagios']['checks']['load']['critical']
   action :add
 end
 
