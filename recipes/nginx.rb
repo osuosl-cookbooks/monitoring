@@ -26,8 +26,8 @@ template "/etc/munin/plugin-conf.d/nginx" do
     mode "0644"
 end
 
-
 munin_plugin 'nginx_request'
 munin_plugin 'nginx_status'
+munin_plugin 'nginx_memory'
 
 
