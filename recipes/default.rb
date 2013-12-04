@@ -40,3 +40,11 @@ nagios_nrpecheck "check_users" do
   command "#{node['nagios']['plugin_dir']}/check_users"
   action :remove
 end
+
+# Check for swap usage
+nagios_nrpecheck "check_swap" do
+  command "#{node['nagios']['plugin_dir']}/check_swap"
+  warning_condition "15%"
+  critical_condition "5%"
+  action :add
+end
