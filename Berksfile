@@ -1,10 +1,11 @@
-cookbook "base", git: "https://github.com/osuosl-cookbooks/base.git"
-cookbook "firewall", git: "https://github.com/osuosl-cookbooks/firewall.git"
-cookbook "aliases", git: "https://github.com/osuosl-cookbooks/aliases.git"
-cookbook "munin", git: "https://github.com/opscode-cookbooks/munin.git"
-cookbook "osl-munin", git: "https://github.com/osuosl-cookbooks/osl-munin.git"
-cookbook "osl-nginx", git: "https://github.com/osuosl-cookbooks/osl-nginx.git"
+cookbook "aliases", github: "osuosl-cookbooks/aliases", protocol: :ssh
+cookbook "base", github: "osuosl-cookbooks/base" , protocol: :ssh
+cookbook "firewall", github: "osuosl-cookbooks/firewall", protocol: :ssh
+cookbook "munin",   github: "opscode-cookbooks/munin", protocol: :ssh
+cookbook "osl-munin", github: "osuosl-cookbooks/osl-munin", protocol: :ssh
+cookbook "osl-nginx", github: "osuosl-cookbooks/osl-nginx", protocol: :ssh
 cookbook "php-fpm", git: "https://github.com/yevgenko/cookbook-php-fpm" 
+cookbook "yum", "< 3.0.0"
 
 site :opscode
 
