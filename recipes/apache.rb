@@ -30,9 +30,6 @@ template "/etc/munin/plugin-conf.d/apache" do
     owner "root"
     group "root"
     mode "0644"
-    variables({
-        :ports => node[:apache][:listen_ports]
-    })
 end
 
 
