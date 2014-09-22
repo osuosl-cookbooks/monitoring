@@ -17,7 +17,9 @@
 # limitations under the License.
 #
 include_recipe "monitoring::http"
+include_recipe "osl-nginx"
 include_recipe "nginx::http_stub_status_module"
+include_recipe "osl-munin::client"
 
 template "/etc/munin/plugin-conf.d/nginx" do
     source "munin/nginx.erb"

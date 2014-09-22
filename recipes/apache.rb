@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#include_recipe "monitoring::http"
+include_recipe "osl-munin::client"
 include_recipe "apache2::mod_status"
 
 package "perl-Crypt-SSLeay" do

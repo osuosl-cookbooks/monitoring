@@ -16,16 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe "nagios::client_package"
+include_recipe "nagios::client"
 
 # Add defaults file for mysql nagios checks
 template "#{node['nagios']['nrpe']['conf_dir']}/mysql.cnf" do
   source "mysql.cnf.erb"
   mode "600"
-  owner #{node['nagios']['user']}
-  group #{node['nagios']['group']}
+  owner node['nagios']['user']
+  group node['nagios']['group']
 end
 
-# Check mysql processlist 
+# Check mysql processlist
 nagios_nrpecheck "pmp-check-mysql-processlist" do
   command "#{node['nagios']['plugin_dir']}/pmp-check-mysql-processlist"
   action :add

@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe "nagios::client_package"
+include_recipe "nagios::client"
 
 package "nagios-plugins-http" do
   action :install
