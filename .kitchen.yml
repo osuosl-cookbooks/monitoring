@@ -11,26 +11,19 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[nagios::client_package]
-      - recipe[nagios::client]
       - recipe[monitoring::default]
   - name: apache
     run_list:
-      - recipe[nagios::client_package]
-      - recipe[nagios::client]
       - recipe[monitoring::apache]
   - name: http
     run_list:
-      - recipe[nagios::client_package]
-      - recipe[nagios::client]
       - recipe[monitoring::http]
   - name: mysql
     run_list:
-      - recipe[nagios::client_package]
-      - recipe[nagios::client]
       - recipe[monitoring::mysql]
   - name: nginx
     run_list:
-      - recipe[nagios::client_package]
-      - recipe[nagios::client]
       - recipe[monitoring::nginx]
+  - name: rtv
+    run_list:
+      - recipe[monitoring::rtv]
