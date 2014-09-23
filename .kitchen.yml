@@ -17,6 +17,9 @@ suites:
   - name: apache
     run_list:
       - recipe[monitoring::apache]
+  - name: haproxy
+    run_list:
+      - recipe[monitoring::haproxy]
   - name: http
     run_list:
       - recipe[monitoring::http]
