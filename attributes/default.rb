@@ -1,5 +1,5 @@
-default['nagios']['check_vhost']['server_name'] = node['fqdn']
-default['nagios']['check_vhost']['ipaddress'] = node['ipaddress']
+default['monitoring']['check_vhost']['server_name'] = node['fqdn']
+default['monitoring']['check_vhost']['ipaddress'] = node['ipaddress']
 
 total_cpu = node['cpu']['total']
 
@@ -24,5 +24,5 @@ when "rhel"
   ]
 end
 
-default['nagios']['checks']['load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
-default['nagios']['checks']['load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"
+default['monitoring']['checks']['load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
+default['monitoring']['checks']['load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"

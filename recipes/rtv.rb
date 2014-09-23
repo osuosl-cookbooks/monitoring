@@ -22,8 +22,8 @@ include_recipe "osl-munin::client"
 
 nagios_nrpecheck "check_rocky_worker" do
   command "#{node['nagios']['plugin_dir']}/check_procs"
-  critical_condition node['nagios']['check_rocky_worker']['critical']
-  parameters node['nagios']['check_rocky_worker']['parameters']
+  critical_condition node['monitoring']['check_rocky_worker']['critical']
+  parameters node['monitoring']['check_rocky_worker']['parameters']
   action :add
 end
 

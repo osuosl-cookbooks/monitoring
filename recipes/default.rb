@@ -22,8 +22,8 @@ include_recipe "nagios::client"
 # Check for high load.  This check defines warning levels and attributes
 nagios_nrpecheck "check_load" do
   command "#{node['nagios']['plugin_dir']}/check_load"
-  warning_condition node['nagios']['checks']['load']['warning']
-  critical_condition node['nagios']['checks']['load']['critical']
+  warning_condition node['monitoring']['checks']['load']['warning']
+  critical_condition node['monitoring']['checks']['load']['critical']
   action :add
 end
 

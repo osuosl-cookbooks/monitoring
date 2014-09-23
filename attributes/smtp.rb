@@ -1,3 +1,3 @@
-default['nagios']['check_mailq']['warning'] = "5000"
-default['nagios']['check_mailq']['critical'] = "10000"
-default['nagios']['check_mailq']['mta'] = "postfix"
+default['monitoring']['check_mailq']['warning'] = "5000"
+default['monitoring']['check_mailq']['critical'] = "10000"
+default['monitoring']['check_mailq']['mta'] = "postfix"
