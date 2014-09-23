@@ -2,6 +2,8 @@ default['monitoring']['check_vhost']['server_name'] = node['fqdn']
 default['monitoring']['check_vhost']['ipaddress'] = node['ipaddress']
 
 total_cpu = node['cpu']['total']
+default['monitoring']['check_load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
+default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"
 
 # Override the defaults for our environment, specifically redhat systems.
 default['nagios']['client']['install_method'] = "package"
@@ -24,5 +26,3 @@ when "rhel"
   ]
 end
 
-default['monitoring']['checks']['load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
-default['monitoring']['checks']['load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"
