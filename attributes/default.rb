@@ -1,5 +1,3 @@
-default['monitoring']['check_vhost']['server_name'] = node['fqdn']
-default['monitoring']['check_vhost']['ipaddress'] = node['ipaddress']
 default['monitoring']['check_all_disks']['warning'] = "8%"
 default['monitoring']['check_all_disks']['critical'] = "5%"
 default['monitoring']['check_all_disks']['parameters'] = "-A -x /dev/shm -X nfs -X fuse.glusterfs -i /boot"
