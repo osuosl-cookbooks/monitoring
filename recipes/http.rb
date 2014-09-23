@@ -24,10 +24,9 @@ package "nagios-plugins-http" do
 end
 
 # Check http
+check_vhost = node['monitoring']['check_vhost']
 nagios_nrpecheck "check_http" do
   command "#{node['nagios']['plugin_dir']}/check_http"
-  parameters "-H #{node['monitoring']['check_vhost']['server_name']} -I #{node['monitoring']['check_vhost']['ipaddress']}"
+  parameters "-H #{check_vhost['server_name']} -I #{check_vhost['ipaddress']}"
   action :add
 end
-
-

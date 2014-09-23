@@ -25,13 +25,12 @@ end
 
 node.override["apache"]["ext_status"] = true
 
-template "/etc/munin/plugin-conf.d/apache" do
-    source "munin/apache.erb"
-    owner "root"
-    group "root"
-    mode "0644"
+template "#{node['munin']['basedir']}/plugin-conf.d/apache" do
+  source "munin/apache.erb"
+  owner "root"
+  group "root"
+  mode "0644"
 end
-
 
 munin_plugin 'apache_accesses'
 munin_plugin 'apache_volume'

@@ -21,15 +21,13 @@ include_recipe "osl-nginx"
 include_recipe "nginx::http_stub_status_module"
 include_recipe "osl-munin::client"
 
-template "/etc/munin/plugin-conf.d/nginx" do
-    source "munin/nginx.erb"
-    owner "root"
-    group "root"
-    mode "0644"
+template "#{node['munin']['basedir']}/plugin-conf.d/nginx" do
+  source "munin/nginx.erb"
+  owner "root"
+  group "root"
+  mode "0644"
 end
 
 munin_plugin 'nginx_request'
 munin_plugin 'nginx_status'
 munin_plugin 'nginx_memory'
-
-

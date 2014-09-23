@@ -46,7 +46,7 @@ nagios_nrpecheck "check_users" do
 end
 
 # Check for swap usage
-check_swap = node['monitoring']['check_load']
+check_swap = node['monitoring']['check_swap']
 nagios_nrpecheck "check_swap" do
   command "#{node['nagios']['plugin_dir']}/check_swap"
   warning_condition check_swap['warning']

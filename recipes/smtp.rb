@@ -19,10 +19,11 @@
 include_recipe "nagios::client_package"
 include_recipe "nagios::client"
 
+check_mailq = node['monitoring']['check_mailq']
 nagios_nrpecheck "check_mailq" do
   command "#{node['nagios']['plugin_dir']}/check_mailq"
-  warning_condition node['monitoring']['check_mailq']['warning']
-  critical_condition node['monitoring']['check_mailq']['critical']
-  parameters "-M #{node['monitoring']['check_mailq']['mta']}"
+  warning_condition check_mailq['warning']
+  critical_condition check_mailq['critical']
+  parameters "-M #{check_mailq['mta']}"
   action :add
 end
