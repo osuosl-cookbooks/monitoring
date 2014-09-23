@@ -18,11 +18,30 @@
 #
 include_recipe "nagios::client_package"
 include_recipe "nagios::client"
+include_recipe "osl-munin::client"
 
-# Check for high load.  This check defines warning levels and attributes
 nagios_nrpecheck "check_rocky_worker" do
   command "#{node['nagios']['plugin_dir']}/check_procs"
   critical_condition node['nagios']['check_rocky_worker']['critical']
   parameters node['nagios']['check_rocky_worker']['parameters']
   action :add
 end
+
+secrets = Chef::EncryptedDataBagItem.load(node['proj-rtv']['data_bag'], "secrets")
+
+template "#{node['munin']['basedir']}/plugin-conf.d/pdf_queue" do
+  source "munin/pdf_queue.erb"
+  owner  "munin"
+  group "root"
+  variables( :secrets => secrets )
+  mode "0600"
+end
+
+cookbook_file "#{node['munin']['plugin_dir']}/pdf_queue" do
+  source "munin/pdf_queue"
+  owner  "root"
+  group "root"
+  mode "0600"
+end
+
+munin_plugin 'pdf_queue'
