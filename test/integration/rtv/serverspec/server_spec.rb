@@ -13,7 +13,10 @@ describe file('/usr/share/munin/plugins/pdf_queue') do
 end
 
 describe file('/etc/munin/plugin-conf.d/pdf_queue') do
+  it { should contain('env.host localhost') }
+  it { should contain('env.name rocky') }
   it { should contain('env.password rocky') }
+  it { should contain('env.user rocky') }
   it { should be_mode 600 }
   it { should be_owned_by 'munin' }
   it { should be_readable.by('owner') }
