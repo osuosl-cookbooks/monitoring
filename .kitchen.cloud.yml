@@ -49,6 +49,9 @@ suites:
   - name: nginx
     run_list:
       - recipe[monitoring::nginx]
+  - name: smtp
+    run_list:
+      - recipe[monitoring::smtp]
   - name: rtv
     run_list:
       - recipe[monitoring::rtv]
