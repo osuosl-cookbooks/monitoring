@@ -25,5 +25,4 @@ template "#{node['munin']['basedir']}/plugin-conf.d/haproxy" do
     mode "0644"
 end
 
-
 munin_plugin 'haproxy_ng'
