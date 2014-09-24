@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#include_recipe "monitoring::http"
+include_recipe "osl-munin::client"
 include_recipe "apache2::mod_status"
 
 package "perl-Crypt-SSLeay" do
@@ -25,13 +25,12 @@ end
 
 node.override["apache"]["ext_status"] = true
 
-template "/etc/munin/plugin-conf.d/apache" do
-    source "munin/apache.erb"
-    owner "root"
-    group "root"
-    mode "0644"
+template "#{node['munin']['basedir']}/plugin-conf.d/apache" do
+  source "munin/apache.erb"
+  owner "root"
+  group "root"
+  mode 0644
 end
-
 
 munin_plugin 'apache_accesses'
 munin_plugin 'apache_volume'

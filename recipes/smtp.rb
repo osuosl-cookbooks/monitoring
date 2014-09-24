@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: monitoring
-# Recipe:: nginx
+# Recipe:: smtp
 #
 # Copyright (C) 2013, Oregon State University
 #
@@ -16,18 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "monitoring::http"
-include_recipe "osl-nginx"
-include_recipe "nginx::http_stub_status_module"
-include_recipe "osl-munin::client"
+include_recipe "nagios::client_package"
+include_recipe "nagios::client"
 
-template "#{node['munin']['basedir']}/plugin-conf.d/nginx" do
-  source "munin/nginx.erb"
-  owner "root"
-  group "root"
-  mode 0644
+check_mailq = node['monitoring']['check_mailq']
+nagios_nrpecheck "check_mailq" do
+  command "#{node['nagios']['plugin_dir']}/check_mailq"
+  warning_condition check_mailq['warning']
+  critical_condition check_mailq['critical']
+  parameters "-M #{check_mailq['mta']}"
+  action :add
 end
-
-munin_plugin 'nginx_request'
-munin_plugin 'nginx_status'
-munin_plugin 'nginx_memory'

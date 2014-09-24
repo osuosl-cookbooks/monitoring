@@ -16,21 +16,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe "nagios::client_package"
+include_recipe "nagios::client"
 
 # Check for high load.  This check defines warning levels and attributes
+check_load = node['monitoring']['check_load']
 nagios_nrpecheck "check_load" do
   command "#{node['nagios']['plugin_dir']}/check_load"
-  warning_condition node['nagios']['checks']['load']['warning']
-  critical_condition node['nagios']['checks']['load']['critical']
+  warning_condition check_load['warning']
+  critical_condition check_load['critical']
   action :add
 end
 
 # Check all non-NFS/tmp-fs disks.
+check_all_disks = node['monitoring']['check_all_disks']
 nagios_nrpecheck "check_all_disks" do
   command "#{node['nagios']['plugin_dir']}/check_disk"
-  warning_condition "8%"
-  critical_condition "5%"
-  parameters "-A -x /dev/shm -X nfs -X fuse.glusterfs -i /boot"
+  warning_condition check_all_disks['warning']
+  critical_condition check_all_disks['critical']
+  parameters check_all_disks['parameters']
   action :add
 end
 
@@ -42,9 +46,10 @@ nagios_nrpecheck "check_users" do
 end
 
 # Check for swap usage
+check_swap = node['monitoring']['check_swap']
 nagios_nrpecheck "check_swap" do
   command "#{node['nagios']['plugin_dir']}/check_swap"
-  warning_condition "15%"
-  critical_condition "5%"
+  warning_condition check_swap['warning']
+  critical_condition check_swap['critical']
   action :add
 end

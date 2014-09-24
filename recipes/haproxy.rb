@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: monitoring
-# Recipe:: nginx
+# Recipe:: haproxy
 #
-# Copyright (C) 2013, Oregon State University
+# Copyright (C) 2014, Oregon State University
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "monitoring::http"
-include_recipe "osl-nginx"
-include_recipe "nginx::http_stub_status_module"
 include_recipe "osl-munin::client"
 
-template "#{node['munin']['basedir']}/plugin-conf.d/nginx" do
-  source "munin/nginx.erb"
+template "#{node['munin']['basedir']}/plugin-conf.d/haproxy" do
+  source "munin/haproxy.erb"
   owner "root"
   group "root"
   mode 0644
 end
 
-munin_plugin 'nginx_request'
-munin_plugin 'nginx_status'
-munin_plugin 'nginx_memory'
+munin_plugin 'haproxy_ng'
