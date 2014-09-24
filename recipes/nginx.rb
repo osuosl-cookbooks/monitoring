@@ -25,7 +25,7 @@ template "#{node['munin']['basedir']}/plugin-conf.d/nginx" do
   source "munin/nginx.erb"
   owner "root"
   group "root"
-  mode "0644"
+  mode 0644
 end
 
 munin_plugin 'nginx_request'

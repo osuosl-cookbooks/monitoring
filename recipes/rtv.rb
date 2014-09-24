@@ -34,14 +34,14 @@ template "#{node['munin']['basedir']}/plugin-conf.d/pdf_queue" do
   owner  "munin"
   group "root"
   variables( :secrets => secrets )
-  mode "0600"
+  mode 0600
 end
 
 cookbook_file "#{node['munin']['plugin_dir']}/pdf_queue" do
   source "munin/pdf_queue"
   owner  "root"
   group "root"
-  mode "0600"
+  mode 0600
 end
 
 munin_plugin 'pdf_queue'

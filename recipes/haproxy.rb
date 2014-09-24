@@ -22,7 +22,7 @@ template "#{node['munin']['basedir']}/plugin-conf.d/haproxy" do
   source "munin/haproxy.erb"
   owner "root"
   group "root"
-  mode "0644"
+  mode 0644
 end
 
 munin_plugin 'haproxy_ng'

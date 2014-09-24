@@ -22,7 +22,7 @@ include_recipe "nagios::client"
 # Add defaults file for mysql nagios checks
 template "#{node['nagios']['nrpe']['conf_dir']}/mysql.cnf" do
   source "mysql.cnf.erb"
-  mode "600"
+  mode 0600
   owner node['nagios']['user']
   group node['nagios']['group']
 end

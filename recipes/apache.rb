@@ -29,7 +29,7 @@ template "#{node['munin']['basedir']}/plugin-conf.d/apache" do
   source "munin/apache.erb"
   owner "root"
   group "root"
-  mode "0644"
+  mode 0644
 end
 
 munin_plugin 'apache_accesses'
