@@ -8,6 +8,7 @@ describe file('/etc/nagios/nrpe.d/check_rocky_worker.cfg') do
 end
 
 describe file('/usr/share/munin/plugins/pdf_queue') do
+  it { should be_mode 755 }
   it { should contain('graph_title PDF Generation Queue') }
 end
 

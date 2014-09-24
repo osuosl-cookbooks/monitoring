@@ -41,7 +41,7 @@ cookbook_file "#{node['munin']['plugin_dir']}/pdf_queue" do
   source "munin/pdf_queue"
   owner  "root"
   group "root"
-  mode 0600
+  mode 0755
 end
 
 munin_plugin 'pdf_queue'
