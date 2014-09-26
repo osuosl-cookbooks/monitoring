@@ -9,6 +9,7 @@ provisioner:
 
 platforms:
   - name: centos-6.5
+  - name: fedora-20
 
 suites:
   - name: default

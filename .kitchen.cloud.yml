@@ -30,6 +30,12 @@ platforms:
     username: centos
     image_ref: "CentOS 6.5"
 
+- name: fedora-20
+  driver_plugin: openstack
+  driver_config:
+    username: fedora
+    image_ref: "Fedora 20"
+
 suites:
   - name: default
     run_list:
