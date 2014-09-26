@@ -11,7 +11,7 @@ default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total
 # Override the defaults for our environment, specifically redhat systems.
 default['nagios']['client']['install_method'] = "package"
 case node['platform_family']
-when "rhel"
+when "rhel", "fedora"
   default['nagios']['user'] = "nrpe"
   default['nagios']['group'] = "nrpe"
   default['nagios']['nrpe']['packages'] = [
