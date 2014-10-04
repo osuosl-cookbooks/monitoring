@@ -1,7 +1,6 @@
 require 'serverspec'
 
-include Serverspec::Helper::DetectOS
-include Serverspec::Helper::Exec
+set :backend, :exec
 
 describe file('/etc/nagios/mysql.cnf') do
   it { should contain("[client]\nuser = root\npassword = ilikerandompasswords") }
