@@ -1,7 +1,6 @@
 require 'serverspec'
 
-include Serverspec::Helper::DetectOS
-include Serverspec::Helper::Exec
+set :backend, :exec
 
 describe file('/etc/nagios/nrpe.d/check_load.cfg') do
   it { should contain('command[check_load]=/usr/lib64/nagios/plugins/check_load -w 12,7,2 -c 14,9,4') }

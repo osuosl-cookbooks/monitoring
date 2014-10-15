@@ -1,7 +1,6 @@
 require 'serverspec'
 
-include Serverspec::Helper::DetectOS
-include Serverspec::Helper::Exec
+set :backend, :exec
 
 describe package('nagios-plugins-http') do
   it { should be_installed }
