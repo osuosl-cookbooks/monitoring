@@ -27,7 +27,11 @@ platforms:
   driver_config:
     username: centos
     image_ref: "CentOS 6.5"
-
+- name: centos-7.0
+  driver_plugin: openstack
+  driver_config:
+    username: centos
+    image_ref: "CentOS 7.0"
 - name: fedora-20
   driver_plugin: openstack
   driver_config:
