@@ -12,14 +12,11 @@ default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total
 default['nagios']['client']['install_method'] = "package"
 case node['platform_family']
 when "rhel", "fedora"
-  default['nagios']['user'] = "nrpe"
-  default['nagios']['group'] = "nrpe"
-  default['nagios']['nrpe']['packages'] = [
+  base_packages = [
     "nrpe",
     "nagios-plugins",
     "nagios-plugins-disk",
     "nagios-plugins-dummy",
-    "nagios-plugins-linux_raid",
     "nagios-plugins-load",
     "nagios-plugins-mailq",
     "nagios-plugins-ntp",
@@ -27,5 +24,11 @@ when "rhel", "fedora"
     "nagios-plugins-swap",
     "nagios-plugins-users"
   ]
-end
 
+  default['nagios']['user'] = "nrpe"
+  default['nagios']['group'] = "nrpe"
+  if node['platform_version'].to_i < 7 or node['platform_family'] == "fedora"
+    base_packages << "nagios-plugins-linux_raid"
+  end
+  default['nagios']['nrpe']['packages'] = base_packages
+end
