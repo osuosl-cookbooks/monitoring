@@ -25,10 +25,10 @@ when "rhel", "fedora"
     "nagios-plugins-users"
   ]
 
-  default['nagios']['user'] = "nrpe"
-  default['nagios']['group'] = "nrpe"
-  if node['platform_version'].to_i < 7 or node['platform_family'] == "fedora"
-    base_packages << "nagios-plugins-linux_raid"
+  default['nagios']['user'] = 'nrpe'
+  default['nagios']['group'] = 'nrpe'
+  if node['platform_version'].to_i < 7 or node['platform_family'] == 'fedora'
+    base_packages << 'nagios-plugins-linux_raid'
   end
   default['nagios']['nrpe']['packages'] = base_packages
 end
