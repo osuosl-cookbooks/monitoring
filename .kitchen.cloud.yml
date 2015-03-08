@@ -56,3 +56,9 @@ suites:
   - name: smtp
     run_list:
       - recipe[monitoring::smtp]
+  - name: raid
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "hp"
