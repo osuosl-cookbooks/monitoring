@@ -23,18 +23,28 @@ include_recipe "nagios::client"
 case node['monitoring']['raid-type']
   when 'aac'
     plugin = "check-aacraid.py"
+    parameters = "2>/dev/null"
   when 'hp'
     plugin = "check_hpacucli"
+    parameters = "-t"
   when 'lsi'
     plugin = "check_lsiutil"
+    parameters = ""
   when 'megaraid'
     plugin = "check_megaraid_sas"
+    parameters = "-b -o 100i -m 1000"
+  when 'megaraid-nobbu'
+    plugin = "check_megaraid_sas"
+    parameters = "-o 100 -m 1000"
   when 'megarc'
     plugin = "check_megarc"
+    parameters = ""
   when 'mpt'
     plugin = "check_mpt"
+    parameters = ""
   when 'md'
     plugin = "md"
+    parameters = ""
 end
 
 # Install nrpe plugin
@@ -46,4 +56,12 @@ else
     mode '775'
     action :create
   end
+end
+
+# Create nrpe check
+check_vhost = node['monitoring']['check_vhost']
+nagios_nrpecheck plugin do
+  command "#{node['nagios']['plugin_dir']}/#{plugin}"
+  parameters parameters
+  action :add
 end
