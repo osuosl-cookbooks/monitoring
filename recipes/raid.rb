@@ -43,12 +43,12 @@ case node['monitoring']['raid-type']
     plugin = "check_mpt"
     parameters = ""
   when 'md'
-    plugin = "md"
+    plugin = "check_linux_raid"
     parameters = ""
 end
 
 # Install nrpe plugin
-if plugin == "md"
+if plugin == "check_linux_raid"
   package "nagios-plugins-linux_raid"
 else
   cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
