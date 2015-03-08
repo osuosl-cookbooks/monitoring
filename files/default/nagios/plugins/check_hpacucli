@@ -1,0 +1,228 @@
+#!/bin/bash
+# vim: set sw=4 ts=4 ai si :
+#
+# Ok, lets try this as a shell script, see how ugly it gets
+#
+# Exit default is STATE_UNKNOWN.  Or '3' prior to 'STATE_UNKNOWN' being known..
+#
+# WARNING:
+# This is a BASH script.  It's possible this will work with Posix SH or KSH,
+# but it definately wont work with just Born-shell
+#
+
+PATH="/bin:/usr/bin"
+
+REVISION="0.1"
+
+PLUGIN_NAME="$(/bin/basename "$0")"
+PLUGIN_PATH="$(/usr/bin/dirname "$0")"
+
+SUDO_PATH="/usr/bin/sudo"
+
+HPACUCLI_PATH="/usr/sbin/hpacucli"
+HPACUCLI_SUDO="yes"
+
+if [ ! -r "${PLUGIN_PATH}/utils.sh" ]
+then
+	echo "Can't find 'utils.sh'.  Death."
+	exit 3
+fi
+
+. ${PLUGIN_PATH}/utils.sh
+
+STATE_STRING[${STATE_OK}]="OK"
+STATE_STRING[${STATE_WARNING}]="WARNING"
+STATE_STRING[${STATE_CRITICAL}]="CRITICAL"
+STATE_STRING[${STATE_UNKNOWN}]="UNKNOWN"
+STATE_STRING[${STATE_DEPENDENT}]="DEPENDENT"
+
+#
+# +( ) extended globbing is used, turn it on.
+#
+shopt -s extglob
+
+#
+# We need the spaces intact through the 'read'
+#
+OLD_IFS="${IFS}"
+NEW_IFS="\n"
+
+#
+# Internal-functions
+#
+usage() {
+	$ECHO "Available arguments: ${PLUGIN_NAME} -t\n"
+}
+
+call_hpacucli() {
+	IFS="${OLD_IFS}"
+	if [ "$HPACUCLI_SUDO" != "" ]
+	then
+		$SUDO_PATH $HPACUCLI_PATH $*
+	else
+		$HPACUCLI_PATH $*
+	fi
+	IFS="${NEW_IFS}"
+}
+
+set_exit_status() {
+	if [ "$1" == "OK" ]
+	then
+		if [ "${EXIT_STATE}" -gt "${STATE_CRITICAL}" ]
+		then
+			EXIT_STATE=${STATE_OK}
+		fi
+	elif [ "$1" == "Predictive Failure" ]
+	then
+		if [ "${EXIT_STATE}" != "${STATE_CRITICAL}" ]
+		then
+			EXIT_STATE=${STATE_WARNING}
+		fi
+	else
+		EXIT_STATE=${STATE_CRITICAL}
+	fi
+}
+
+#
+# The actual work
+#
+parse_acucli() {
+	IFS="${NEW_IFS}"
+	while read LINE
+	do
+		if [ "${LINE}" == "" ]
+		then
+			continue
+		fi
+        if [ "${LINE:0:8}" == "FIRMWARE" ] ; then
+            continue
+        fi
+		if [ "${LINE:0:1}" != " " ]
+		then
+			if [ "${CTRL_NAME}" != "" ]
+			then
+				JUNK="${EXIT_STRING}${CTRL_NAME} ${CTRL_CR}/${CTRL_CA}/${CTRL_BS} (${L_STRING}LD ${L_ID}: ${L_ST} [${P_OUT% }]) "
+				EXIT_STRING="$JUNK"
+				unset CTRL_NAME CTRL_CR CTRL_CA CTRL_BS L_STRING L_ID L_ST P_OUT P_ID P_ST
+			fi
+			MODE="cr"
+			CTRL_NAME="${LINE}"
+			CTRL_BS="-"
+			CTRL_CA="-"
+			CTRL_CR="-"
+			continue
+		fi
+
+#
+# Strip leading spaces
+#
+		J="${LINE##+( )}"
+#
+# Find a Controller states
+#
+		if [ "$MODE" == "cr" ]
+		then
+			case "${J% *}" in
+				"Battery Status:")
+					CTRL_BS="${LINE##*: }"
+					set_exit_status ${CTRL_BS}
+					;;
+				"Cache Status:")
+					CTRL_CA="${LINE##*: }"
+					set_exit_status ${CTRL_CA}
+					;;
+				"Controller Status:")
+					CTRL_CR="${LINE##*: }"
+					set_exit_status ${CTRL_CR}
+					;;
+			esac
+		fi
+
+#
+# Find a Logical Drive
+#
+		if [ "${J% *}" == "Array:" ]
+		then
+			MODE="ar"
+		fi
+		if [ "${J% *}" == "Logical Drive:" ]
+		then
+			if [ "${L_ID}" != "" ]
+			then
+				L_STRING="${L_STRING}LD ${L_ID}: ${L_ST} [${P_OUT% }] "
+				unset P_OUT P_ST P_ID L_ID L_ST
+			fi
+			MODE="ld"
+			L_ID="${LINE##*: }"
+			continue
+		fi
+		if [ "${MODE}" == "ld" -a "${J% *}" == "Status:" ]
+		then
+			L_ST="${LINE##*: }"
+			set_exit_status ${L_ST}
+			continue
+		fi
+#
+# Find a Physical Drive
+#
+		if [ "${J% *}" == "physicaldrive" ]
+		then
+			MODE="pd"
+			P_ID="${J##* }"
+			continue
+		fi
+		if [ "${MODE}" == "pd" -a "${J% *}" == "Status:" ]
+		then
+			P_ST="${LINE##*: }"
+			set_exit_status ${P_ST}
+            if [ "${P_ST}" != "OK" ]
+            then
+			    JUNK="${P_OUT}(${P_ID} ${P_ST}) "
+			    P_OUT="${JUNK}"
+            fi
+			unset P_ST P_ID
+			continue
+		fi
+
+	done < <( call_hpacucli ctrl all show config detail )
+	JUNK="${EXIT_STRING}${CTRL_NAME} ${CTRL_CR}/${CTRL_CA}/${CTRL_BS} (${L_STRING}LD ${L_ID}: ${L_ST} [${P_OUT% }]) "
+	EXIT_STRING="$JUNK"
+	IFS="${OLD_IFS}"
+}
+
+#
+# The Argument handler and Main execution rig
+#
+TEST=""
+
+EXIT_STATE=${STATE_UNKNOWN}
+EXIT_STRING=""
+
+if [ "$#" == "0" ]
+then
+	usage
+	exit ${STATE_UNKNOWN}
+fi
+
+while getopts "t" TMP_STRING
+do
+	case $TMP_STRING in
+		t)
+			parse_acucli
+			;;
+		*)
+			if [ "$TMP_STRING" != "?" ]
+			then
+				$ECHO "$0: unknown argument passed -- $TMP_STRING\n"
+			fi
+			usage
+			exit ${STATE_UNKNOWN}
+			;;
+	esac
+done
+
+#
+# The exit
+#
+${ECHO} "%s %s\n" ${STATE_STRING[${EXIT_STATE}]} "${EXIT_STRING}"
+exit ${EXIT_STATE}
