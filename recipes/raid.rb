@@ -16,40 +16,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "nagios::client_package"
-include_recipe "nagios::client"
+include_recipe 'nagios::client_package'
+include_recipe 'nagios::client'
 
 # Get RAID type and set nrpe plugin name
 case node['monitoring']['raid-type']
-  when 'aac'
-    plugin = "check-aacraid.py"
-    parameters = "2>/dev/null"
-  when 'hp'
-    plugin = "check_hpacucli"
-    parameters = "-t"
-  when 'lsi'
-    plugin = "check_lsiutil"
-    parameters = ""
-  when 'megaraid'
-    plugin = "check_megaraid_sas"
-    parameters = "-b -o 100i -m 1000"
-  when 'megaraid-nobbu'
-    plugin = "check_megaraid_sas"
-    parameters = "-o 100 -m 1000"
-  when 'megarc'
-    plugin = "check_megarc"
-    parameters = ""
-  when 'mpt'
-    plugin = "check_mpt"
-    parameters = ""
-  when 'md'
-    plugin = "check_linux_raid"
-    parameters = ""
+when 'aac'
+  plugin = 'check-aacraid.py'
+  parameters = '2>/dev/null'
+when 'hp'
+  plugin = 'check_hpacucli'
+  parameters = '-t'
+when 'lsi'
+  plugin = 'check_lsiutil'
+  parameters = ''
+when 'megaraid'
+  plugin = 'check_megaraid_sas'
+  parameters = '-b -o 100i -m 1000'
+when 'megaraid-nobbu'
+  plugin = 'check_megaraid_sas'
+  parameters = '-o 100 -m 1000'
+when 'megarc'
+  plugin = 'check_megarc'
+  parameters = ''
+when 'mpt'
+  plugin = 'check_mpt'
+  parameters = ''
+when 'md'
+  plugin = 'check_linux_raid'
+  parameters = ''
 end
 
 # Install nrpe plugin
-if plugin == "check_linux_raid"
-  package "nagios-plugins-linux_raid"
+if plugin == 'check_linux_raid'
+  package 'nagios-plugins-linux_raid'
 else
   cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
     source File.join('nagios', 'plugins', plugin)
@@ -59,7 +59,6 @@ else
 end
 
 # Create nrpe check
-check_vhost = node['monitoring']['check_vhost']
 nagios_nrpecheck plugin do
   command "#{node['nagios']['plugin_dir']}/#{plugin}"
   parameters parameters

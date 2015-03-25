@@ -7,5 +7,5 @@ describe file('/usr/lib64/nagios/plugins/check_hpacucli') do
 end
 
 describe file('/etc/nagios/nrpe.d/check_hpacucli.cfg') do
-  its(:content) { should match /command\[check_hpacucli\]=\/usr\/lib64\/nagios\/plugins\/check_hpacucli -t/ }
+  its(:content) { should match %r{command\[check_hpacucli\]=\/usr\/lib64\/nagios\/plugins\/check_hpacucli -t} }
 end
