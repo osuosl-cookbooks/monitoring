@@ -55,7 +55,9 @@ plugininfo['md'] = {
 }
 
 # By default, RAID type is specified manually through an attribute
-raidtype = node['monitoring']['raid-type']
+if plugininfo.key? node['monitoring']['raid-type']
+  raidtype = node['monitoring']['raid-type']
+end
 
 # If RAID type not set, try and detect it automatically
 if raidtype.nil?
