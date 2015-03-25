@@ -19,48 +19,81 @@
 include_recipe 'nagios::client_package'
 include_recipe 'nagios::client'
 
-# Get RAID type and set nrpe plugin name
-case node['monitoring']['raid-type']
-when 'aac'
-  plugin = 'check-aacraid.py'
-  parameters = '2>/dev/null'
-when 'hp'
-  plugin = 'check_hpacucli'
-  parameters = '-t'
-when 'lsi'
-  plugin = 'check_lsiutil'
-  parameters = ''
-when 'megaraid'
-  plugin = 'check_megaraid_sas'
-  parameters = '-b -o 100i -m 1000'
-when 'megaraid-nobbu'
-  plugin = 'check_megaraid_sas'
-  parameters = '-o 100 -m 1000'
-when 'megarc'
-  plugin = 'check_megarc'
-  parameters = ''
-when 'mpt'
-  plugin = 'check_mpt'
-  parameters = ''
-when 'md'
-  plugin = 'check_linux_raid'
-  parameters = ''
-end
+# NRPE plugins and parameters
+plugininfo = {}
+plugininfo['aac'] = {
+  'plugin' => 'check-aacraid.py',
+  'parameters' => '2>/dev/null'
+}
+plugininfo['hp'] = {
+  'plugin' => 'check_hpacucli',
+  'parameters' => '-t'
+}
+plugininfo['lsiutil'] = {
+  'plugin' => 'check_lsiutil',
+  'parameters' => ''
+}
+plugininfo['megaraid'] = {
+  'plugin' => 'check_megaraid_sas',
+  'parameters' => '-b -o 100i -m 1000'
+}
+plugininfo['megaraid-nobbu'] = {
+  'plugin' => 'check_megaraid_sas',
+  'parameters' => '-o 100 -m 1000'
+}
+plugininfo['megarc'] = {
+  'plugin' => 'check_megarc',
+  'parameters' => ''
+}
+plugininfo['mpt'] = {
+  'plugin' => 'check_mpt',
+  'parameters' => ''
+}
+plugininfo['md'] = {
+  'plugin' => 'check_linux_raid',
+  'parameters' => ''
+}
 
-# Install nrpe plugin
-if plugin == 'check_linux_raid'
-  package 'nagios-plugins-linux_raid'
-else
-  cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
-    source File.join('nagios', 'plugins', plugin)
-    mode '775'
-    action :create
+# By default, RAID type is specified manually through an attribute
+raidtype = node['monitoring']['raid-type']
+
+# If RAID type not set, try and detect it automatically
+if raidtype.nil?
+  if node['kernel']['modules'].key? 'aacraid'
+    raidtype = 'aac'
+  elsif node['kernel']['modules'].key? 'megaraid_sas'
+    raidtype = 'megaraid'
+  elsif node['kernel']['modules'].key? 'cciss'
+    raidtype = 'hp'
+  elsif node['kernel']['modules'].key? 'mptctl'
+    raidtype = 'mpt'
+  elsif File.exist? '/usr/sbin/lsiutil'
+    raidtype = 'lsiutil'
+  elsif File.exist? '/opt/bin/megarc'
+    raidtype = 'megarc'
   end
 end
 
-# Create nrpe check
-nagios_nrpecheck plugin do
-  command "#{node['nagios']['plugin_dir']}/#{plugin}"
-  parameters parameters
-  action :add
+# Don't do anything if we still don't have a RAID type
+unless raidtype.nil?
+  plugin = plugininfo[raidtype]['plugin']
+  parameters = plugininfo[raidtype]['parameters']
+
+  # Install nrpe plugin
+  if raidtype == 'md'
+    package 'nagios-plugins-linux_raid'
+  else
+    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+      source File.join('nagios', 'plugins', plugin)
+      mode '775'
+      action :create
+    end
+  end
+
+  # Create nrpe check
+  nagios_nrpecheck plugin do
+    command "#{node['nagios']['plugin_dir']}/#{plugin}"
+    parameters parameters
+    action :add
+  end
 end
