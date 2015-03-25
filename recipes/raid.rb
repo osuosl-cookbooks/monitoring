@@ -93,7 +93,7 @@ unless raidtype.nil?
   end
 
   # Create nrpe check
-  nagios_nrpecheck plugin do
+  nagios_nrpecheck "check_raid_#{raidtype}" do
     command "#{node['nagios']['plugin_dir']}/#{plugin}"
     parameters parameters
     action :add
