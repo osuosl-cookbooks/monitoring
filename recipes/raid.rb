@@ -77,9 +77,9 @@ if raidtype.nil?
     raidtype = 'hp'
   elsif node['kernel']['modules'].key? 'mptctl'
     raidtype = 'mpt'
-  elsif `lspci` =~ /SCSI storage controller: LSI/ != nil
+  elsif !(`lspci` =~ /SCSI storage controller: LSI/).nil?
     raidtype = 'lsiutil'
-  elsif `lspci` =~ /RAID bus controller: Dell/ != nil
+  elsif !(`lspci` =~ /RAID bus controller: Dell/).nil?
     raidtype = 'megarc'
   end
 end
