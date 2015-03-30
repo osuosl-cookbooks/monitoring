@@ -19,39 +19,47 @@
 include_recipe 'nagios::client_package'
 include_recipe 'nagios::client'
 
-# NRPE plugins and parameters
+# NRPE plugins, parameters, and required packages
 plugininfo = {}
 plugininfo['aac'] = {
   'plugin' => 'check-aacraid.py',
-  'parameters' => '2>/dev/null'
+  'parameters' => '2>/dev/null',
+  'packages' => []
 }
 plugininfo['hp'] = {
   'plugin' => 'check_hpacucli',
-  'parameters' => '-t'
+  'parameters' => '-t',
+  'packages' => ['hpacucli']
 }
 plugininfo['lsiutil'] = {
   'plugin' => 'check_lsiutil',
-  'parameters' => ''
+  'parameters' => '',
+  'packages' => ['lsiutil']
 }
 plugininfo['megaraid'] = {
   'plugin' => 'check_megaraid_sas',
-  'parameters' => '-b -o 100i -m 1000'
+  'parameters' => '-b -o 100i -m 1000',
+  'packages' => ['megacli']
 }
 plugininfo['megaraid-nobbu'] = {
   'plugin' => 'check_megaraid_sas',
-  'parameters' => '-o 100 -m 1000'
+  'parameters' => '-o 100 -m 1000',
+  'packages' => ['megacli']
 }
 plugininfo['megarc'] = {
   'plugin' => 'check_megarc',
-  'parameters' => ''
+  'parameters' => '',
+  'packages' => ['megarc']
 }
 plugininfo['mpt'] = {
   'plugin' => 'check_mpt',
-  'parameters' => ''
+  'parameters' => '',
+  'packages' => ['mptstatus']
 }
 plugininfo['md'] = {
   'plugin' => 'check_linux_raid',
-  'parameters' => ''
+  'parameters' => '',
+  'packages' => ['nagios-plugins-linux_raid']
 }
 
 # By default, RAID type is specified manually through an attribute
@@ -69,9 +77,9 @@ if raidtype.nil?
     raidtype = 'hp'
   elsif node['kernel']['modules'].key? 'mptctl'
     raidtype = 'mpt'
-  elsif File.exist? '/usr/sbin/lsiutil'
+  elsif `lspci` =~ /SCSI storage controller: LSI/ != nil
     raidtype = 'lsiutil'
-  elsif File.exist? '/opt/bin/megarc'
+  elsif `lspci` =~ /RAID bus controller: Dell/ != nil
     raidtype = 'megarc'
   end
 end
@@ -80,16 +88,18 @@ end
 unless raidtype.nil?
   plugin = plugininfo[raidtype]['plugin']
   parameters = plugininfo[raidtype]['parameters']
+  packages = plugininfo[raidtype]['packages']
+
+  # Install required packages
+  packages.each do |p|
+    package p
+  end
 
   # Install nrpe plugin
-  if raidtype == 'md'
-    package 'nagios-plugins-linux_raid'
-  else
-    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
-      source File.join('nagios', 'plugins', plugin)
-      mode '775'
-      action :create
-    end
+  cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+    source File.join('nagios', 'plugins', plugin)
+    mode '775'
+    action :create
   end
 
   # Create nrpe check
