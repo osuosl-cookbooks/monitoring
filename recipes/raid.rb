@@ -64,12 +64,17 @@ plugininfo['md'] = {
 }
 
 # By default, RAID type is specified manually through an attribute
-if plugininfo.key? node['monitoring'].fetch('raid-type', nil)
-  raidtype = node['monitoring']['raid-type']
+raidtype = node['monitoring'].fetch('raid-type', nil)
+
+# If the specified RAID type is invalid, unset it
+unless raidtype == nil or plugininfo.key? raidtype 
+  Chef::Log.error("Invalid RAID check type specified; '#{raidtype}' not found.")
+  raidtype = nil
 end
 
 # If RAID type not set, try and detect it automatically
 if raidtype.nil?
+  Chef::Log.info("No RAID check type specified; attempting autodetection.")
   if node['kernel']['modules'].key? 'aacraid'
     raidtype = 'aac'
   elsif node['kernel']['modules'].key? 'megaraid_sas'
@@ -86,7 +91,11 @@ if raidtype.nil?
 end
 
 # Don't do anything if we still don't have a RAID type
-unless raidtype.nil?
+if raidtype.nil?
+  Chef::Log.warning("Could not detect RAID check type; not creating any Nagios RAID checks.")
+else
+  Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
+
   plugin = plugininfo[raidtype]['plugin']
   parameters = plugininfo[raidtype]['parameters']
   packages = plugininfo[raidtype]['packages']
