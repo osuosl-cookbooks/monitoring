@@ -24,3 +24,47 @@ suites:
   - name: smtp
     run_list:
       - recipe[monitoring::smtp]
+  - name: raid-aac
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "aac"
+  - name: raid-hp
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "hp"
+    excludes:
+      - fedora-20
+  - name: raid-lsiutil
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "lsiutil"
+  - name: raid-megaraid
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "megaraid"
+  - name: raid-megarc
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "megarc"
+  - name: raid-mpt
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "mpt"
+  - name: raid-md
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      monitoring:
+        raid-type: "md"
