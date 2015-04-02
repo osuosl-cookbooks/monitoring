@@ -109,13 +109,11 @@ else
   cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
     source File.join('nagios', 'plugins', plugin)
     mode '775'
-    action :create
   end
 
   # Create nrpe check
   nagios_nrpecheck "check_raid_#{raidtype}" do
-    command "#{node['nagios']['plugin_dir']}/#{plugin}"
+    command File.join(node['nagios']['plugin_dir'], plugin)
     parameters parameters
-    action :add
   end
 end
