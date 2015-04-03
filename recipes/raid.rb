@@ -28,27 +28,27 @@ if node['monitoring']['check-raid']
       'plugin' => 'check-aacraid.py',
       'parameters' => '2>/dev/null',
       'packages' => []
-    }
+    },
     'hp' => {
       'plugin' => 'check_hpacucli',
       'parameters' => '-t',
       'packages' => ['hpacucli']
-    }
+    },
     'megaraid' => {
       'plugin' => 'check_megaraid_sas',
       'parameters' => '-b -o 100 -m 1000',
       'packages' => ['megacli']
-    }
+    },
     'megaraid-nobbu' => {
       'plugin' => 'check_megaraid_sas',
       'parameters' => '-o 100 -m 1000',
       'packages' => ['megacli']
-    }
+    },
     'mpt' => {
       'plugin' => 'check_mpt',
       'parameters' => '',
       'packages' => ['mptstatus']
-    }
+    },
     'md' => {
       'plugin' => 'check_linux_raid',
       'parameters' => '',
@@ -57,15 +57,15 @@ if node['monitoring']['check-raid']
   }
 
   # Try and detect the RAID check type automatically
-  case 
-  when node['kernel']['modules'].key? 'aacraid'
-    raidtype = 'aac'
-  when node['kernel']['modules'].key? 'megaraid_sas'
-    raidtype = 'megaraid'
-  when node['kernel']['modules'].key? 'cciss'
-    raidtype = 'hp'
-  when node['kernel']['modules'].key? 'mptctl'
-    raidtype = 'mpt'
+  raidtype = case
+  when node['kernel']['modules'].key?('aacraid')
+    'aac'
+  when node['kernel']['modules'].key?('megaraid_sas')
+    'megaraid'
+  when node['kernel']['modules'].key?('cciss')
+    'hp'
+  when node['kernel']['modules'].key?('mptctl')
+    'mpt'
   end
 
   if raidtype.nil?
