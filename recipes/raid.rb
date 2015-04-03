@@ -16,104 +16,83 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'base::oslrepo'
-include_recipe 'nagios::client_package'
-include_recipe 'nagios::client'
 
-# NRPE plugins, parameters, and required packages
-plugininfo = {}
-plugininfo['aac'] = {
-  'plugin' => 'check-aacraid.py',
-  'parameters' => '2>/dev/null',
-  'packages' => []
-}
-plugininfo['hp'] = {
-  'plugin' => 'check_hpacucli',
-  'parameters' => '-t',
-  'packages' => ['hpacucli']
-}
-plugininfo['lsiutil'] = {
-  'plugin' => 'check_lsiutil',
-  'parameters' => '',
-  'packages' => ['lsiutil']
-}
-plugininfo['megaraid'] = {
-  'plugin' => 'check_megaraid_sas',
-  'parameters' => '-b -o 100 -m 1000',
-  'packages' => ['megacli']
-}
-plugininfo['megaraid-nobbu'] = {
-  'plugin' => 'check_megaraid_sas',
-  'parameters' => '-o 100 -m 1000',
-  'packages' => ['megacli']
-}
-plugininfo['megarc'] = {
-  'plugin' => 'check_megarc',
-  'parameters' => '',
-  'packages' => ['megarc']
-}
-plugininfo['mpt'] = {
-  'plugin' => 'check_mpt',
-  'parameters' => '',
-  'packages' => ['mptstatus']
-}
-plugininfo['md'] = {
-  'plugin' => 'check_linux_raid',
-  'parameters' => '',
-  'packages' => ['nagios-plugins-linux_raid']
-}
+if node['monitoring']['check-raid']
+  include_recipe 'base::oslrepo'
+  include_recipe 'nagios::client_package'
+  include_recipe 'nagios::client'
 
-# By default, RAID type is specified manually through an attribute
-raidtype = node['monitoring'].fetch('raid-type', nil)
+  # NRPE plugins, parameters, and required packages
+  plugininfo = {
+    'aac' => {
+      'plugin' => 'check-aacraid.py',
+      'parameters' => '2>/dev/null',
+      'packages' => []
+    }
+    'hp' => {
+      'plugin' => 'check_hpacucli',
+      'parameters' => '-t',
+      'packages' => ['hpacucli']
+    }
+    'megaraid' => {
+      'plugin' => 'check_megaraid_sas',
+      'parameters' => '-b -o 100 -m 1000',
+      'packages' => ['megacli']
+    }
+    'megaraid-nobbu' => {
+      'plugin' => 'check_megaraid_sas',
+      'parameters' => '-o 100 -m 1000',
+      'packages' => ['megacli']
+    }
+    'mpt' => {
+      'plugin' => 'check_mpt',
+      'parameters' => '',
+      'packages' => ['mptstatus']
+    }
+    'md' => {
+      'plugin' => 'check_linux_raid',
+      'parameters' => '',
+      'packages' => ['nagios-plugins-linux_raid']
+    }
+  }
 
-# If the specified RAID type is invalid, unset it
-unless raidtype == nil or plugininfo.key? raidtype 
-  Chef::Log.error("Invalid RAID check type specified; '#{raidtype}' not found.")
-  raidtype = nil
-end
-
-# If RAID type not set, try and detect it automatically
-if raidtype.nil?
-  Chef::Log.info("No RAID check type specified; attempting autodetection.")
-  if node['kernel']['modules'].key? 'aacraid'
+  # Try and detect the RAID check type automatically
+  case 
+  when node['kernel']['modules'].key? 'aacraid'
     raidtype = 'aac'
-  elsif node['kernel']['modules'].key? 'megaraid_sas'
+  when node['kernel']['modules'].key? 'megaraid_sas'
     raidtype = 'megaraid'
-  elsif node['kernel']['modules'].key? 'cciss'
+  when node['kernel']['modules'].key? 'cciss'
     raidtype = 'hp'
-  elsif node['kernel']['modules'].key? 'mptctl'
+  when node['kernel']['modules'].key? 'mptctl'
     raidtype = 'mpt'
-  elsif !(`lspci` =~ /SCSI storage controller: LSI/).nil?
-    raidtype = 'lsiutil'
-  elsif !(`lspci` =~ /RAID bus controller: Dell/).nil?
-    raidtype = 'megarc'
-  end
-end
-
-# Don't do anything if we still don't have a RAID type
-if raidtype.nil?
-  Chef::Log.warn("Could not detect RAID check type; not creating any Nagios RAID checks.")
-else
-  Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
-
-  plugin = plugininfo[raidtype]['plugin']
-  parameters = plugininfo[raidtype]['parameters']
-  packages = plugininfo[raidtype]['packages']
-
-  # Install required packages
-  packages.each do |p|
-    package p
   end
 
-  # Install nrpe plugin
-  cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
-    source File.join('nagios', 'plugins', plugin)
-    mode '775'
-  end
+  if raidtype.nil?
+    # Don't do anything if we still don't have a RAID type
+    Chef::Log.warn("Could not detect RAID check type; not creating any Nagios RAID checks.")
+  else
+    Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
 
-  # Create nrpe check
-  nagios_nrpecheck "check_raid_#{raidtype}" do
-    command File.join(node['nagios']['plugin_dir'], plugin)
-    parameters parameters
+    plugin = plugininfo[raidtype]['plugin']
+    parameters = plugininfo[raidtype]['parameters']
+    packages = plugininfo[raidtype]['packages']
+
+    # Install required packages
+    packages.each do |p|
+      package p
+    end
+
+    # Install nrpe plugin
+    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+      source File.join('nagios', 'plugins', plugin)
+      mode '775'
+    end
+
+    # Create nrpe check
+    nagios_nrpecheck "check_raid_#{raidtype}" do
+      command File.join(node['nagios']['plugin_dir'], plugin)
+      parameters parameters
+    end
   end
 end
