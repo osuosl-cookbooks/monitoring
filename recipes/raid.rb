@@ -39,7 +39,7 @@ plugininfo['lsiutil'] = {
 }
 plugininfo['megaraid'] = {
   'plugin' => 'check_megaraid_sas',
-  'parameters' => '-b -o 100i -m 1000',
+  'parameters' => '-b -o 100 -m 1000',
   'packages' => ['megacli']
 }
 plugininfo['megaraid-nobbu'] = {
@@ -92,7 +92,7 @@ end
 
 # Don't do anything if we still don't have a RAID type
 if raidtype.nil?
-  Chef::Log.warning("Could not detect RAID check type; not creating any Nagios RAID checks.")
+  Chef::Log.warn("Could not detect RAID check type; not creating any Nagios RAID checks.")
 else
   Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
 
