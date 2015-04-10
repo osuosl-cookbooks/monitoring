@@ -60,28 +60,32 @@ suites:
     run_list:
       - recipe[monitoring::raid]
     attributes:
-      monitoring:
-        raid-type: "aac"
+      kernel:
+        modules:
+          aacraid:
   - name: raid-hp
     run_list:
       - recipe[monitoring::raid]
     attributes:
-      monitoring:
-        raid-type: "hp"
+      kernel:
+        modules:
+          cciss:
     excludes:
       - fedora-20
   - name: raid-megaraid
     run_list:
       - recipe[monitoring::raid]
     attributes:
-      monitoring:
-        raid-type: "megaraid"
+      kernel:
+        modules:
+          megaraid_sas:
   - name: raid-mpt
     run_list:
       - recipe[monitoring::raid]
     attributes:
-      monitoring:
-        raid-type: "mpt"
+      kernel:
+        modules:
+          mptctl:
   - name: raid-md
     run_list:
       - recipe[md-test]
