@@ -21,13 +21,21 @@ drives = 2
 
 drives.times do |i|
   unless File.exists?("/root/raid-#{i}")
-    execute "dd if=/dev/zero of=/root/raid-#{i} bs=1M count=10"
-    execute "losetup /dev/loop#{i} /root/raid-#{i}"
+    execute "dd if=/dev/zero of=/root/raid-#{i} bs=1M count=10" do
+      action :nothing
+    end.run_action(:run)
+    execute "losetup /dev/loop#{i} /root/raid-#{i}" do
+      action :nothing
+    end.run_action(:run)
   end
 end
 
 mdadm "/dev/md0" do
   devices drives.times.map{|i| "/dev/loop#{i}"}
   level 1
-  action :create
-end
+  action :nothing
+end.run_action(:create)
+
+ohai "reload" do
+  action :nothing
+end.run_action(:reload)
