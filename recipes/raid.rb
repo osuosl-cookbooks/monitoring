@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-if node['monitoring']['check-raid']
-  include_recipe 'base::oslrepo'
+if node['monitoring']['check_raid']
+  include_recipe 'base::oslrepo' # Required to install `hpacucli` package
   include_recipe 'nagios::client_package'
   include_recipe 'nagios::client'
 
@@ -66,6 +66,8 @@ if node['monitoring']['check-raid']
     'hp'
   when node['kernel']['modules'].key?('mptctl')
     'mpt'
+  when node.key?('mdadm')
+    'md'
   end
 
   if raidtype.nil?
@@ -84,9 +86,11 @@ if node['monitoring']['check-raid']
     end
 
     # Install nrpe plugin
-    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+    pluginpath = File.join(node['nagios']['plugin_dir'], plugin)
+    cookbook_file pluginpath do
       source File.join('nagios', 'plugins', plugin)
       mode '775'
+      only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath) }
     end
 
     # Create nrpe check
