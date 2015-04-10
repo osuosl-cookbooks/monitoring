@@ -10,5 +10,5 @@ end
 
 # Check that the nrpe config exists
 describe file('/etc/nagios/nrpe.d/check_raid_aac.cfg') do
-  its(:content) { should match %r{command[check_raid_aac]=/usr/lib64/nagios/plugins/check-aacraid.py 2>/dev/null} }
+  its(:content) { should match %r{command\[check_raid_aac\]=/usr/lib64/nagios/plugins/check-aacraid.py 2>/dev/null} }
 end

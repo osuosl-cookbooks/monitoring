@@ -15,5 +15,5 @@ end
 
 # Check that the nrpe config exists
 describe file('/etc/nagios/nrpe.d/check_raid_megaraid.cfg') do
-  its(:content) { should match %r{command[check_raid_megaraid]=/usr/lib64/nagios/plugins/check_megaraid_sas -b -o 100i -m 1000} }
+  its(:content) { should match %r{command\[check_raid_megaraid\]=/usr/lib64/nagios/plugins/check_megaraid_sas -b -o 100i -m 1000} }
 end
