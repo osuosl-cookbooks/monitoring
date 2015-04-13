@@ -85,15 +85,16 @@ if node['monitoring']['check_raid']
       package p
     end
 
-    # Install nrpe plugin
-    pluginpath = File.join('files', 'default', 'nagios', 'plugins', plugin)
-    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
-      source pluginpath
-      mode '775'
-      only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath) }
+    # Copy over NRPE plugin (if applicable)
+    pluginpath = File.join('nagios', 'plugins', plugin)
+    if run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath)
+      cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+        source pluginpath
+        mode '775'
+      end
     end
 
-    # Create nrpe check
+    # Create NRPE check
     nagios_nrpecheck "check_raid_#{raidtype}" do
       command File.join(node['nagios']['plugin_dir'], plugin)
       parameters parameters
