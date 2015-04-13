@@ -72,7 +72,7 @@ if node['monitoring']['check_raid']
 
   if raidtype.nil?
     # Don't do anything if we still don't have a RAID type
-    Chef::Log.warn("Could not detect RAID check type; not creating any Nagios RAID checks.")
+    Chef::Log.warn('Could not detect RAID check type; not creating any Nagios RAID checks.')
   else
     Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
 

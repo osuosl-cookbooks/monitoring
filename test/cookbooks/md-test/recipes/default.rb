@@ -20,7 +20,7 @@
 drives = 2
 
 drives.times do |i|
-  unless File.exists?("/root/raid-#{i}")
+  unless File.exist?("/root/raid-#{i}")
     execute "dd if=/dev/zero of=/root/raid-#{i} bs=1M count=10" do
       action :nothing
     end.run_action(:run)
@@ -30,12 +30,12 @@ drives.times do |i|
   end
 end
 
-mdadm "/dev/md0" do
-  devices drives.times.map{|i| "/dev/loop#{i}"}
+mdadm '/dev/md0' do
+  devices drives.times.map { |i| "/dev/loop#{i}" }
   level 1
   action :nothing
 end.run_action(:create)
 
-ohai "reload" do
+ohai 'reload' do
   action :nothing
 end.run_action(:reload)
