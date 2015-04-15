@@ -18,7 +18,6 @@
 #
 
 if node['monitoring']['check_raid']
-  include_recipe 'base::oslrepo' # Required to install `hpacucli` package
   include_recipe 'nagios::client_package'
   include_recipe 'nagios::client'
 
@@ -27,32 +26,38 @@ if node['monitoring']['check_raid']
     'aac' => {
       'plugin' => 'check-aacraid.py',
       'parameters' => '2>/dev/null',
-      'packages' => []
+      'packages' => [],
+      'use_custom_repo' => false
     },
     'hp' => {
       'plugin' => 'check_hpacucli',
       'parameters' => '-t',
-      'packages' => ['hpacucli']
+      'packages' => ['hpacucli'],
+      'use_custom_repo' => true
     },
     'megaraid' => {
       'plugin' => 'check_megaraid_sas',
       'parameters' => '-b -o 100 -m 1000',
-      'packages' => ['megacli']
+      'packages' => ['megacli'],
+      'use_custom_repo' => true
     },
     'megaraid-nobbu' => {
       'plugin' => 'check_megaraid_sas',
       'parameters' => '-o 100 -m 1000',
-      'packages' => ['megacli']
+      'packages' => ['megacli'],
+      'use_custom_repo' => true
     },
     'mpt' => {
       'plugin' => 'check_mpt',
       'parameters' => '',
-      'packages' => ['mptstatus']
+      'packages' => ['mpt-status'],
+      'use_custom_repo' => true
     },
     'md' => {
       'plugin' => 'check_linux_raid',
       'parameters' => '',
-      'packages' => ['nagios-plugins-linux_raid']
+      'packages' => ['nagios-plugins-linux_raid'],
+      'use_custom_repo' => false
     }
   }
 
@@ -79,6 +84,8 @@ if node['monitoring']['check_raid']
     plugin = plugininfo[raidtype]['plugin']
     parameters = plugininfo[raidtype]['parameters']
     packages = plugininfo[raidtype]['packages']
+
+    include_recipe 'base::oslrepo' if plugininfo[raidtype]['use_custom_repo']
 
     # Install required packages
     packages.each do |p|

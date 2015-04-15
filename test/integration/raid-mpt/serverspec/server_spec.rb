@@ -3,7 +3,7 @@ require 'serverspec'
 set :backend, :exec
 
 # Check that the dependencies are installed
-describe package('mptstatus') do
+describe package('mpt-status') do
   it { should be_installed }
 end
 
