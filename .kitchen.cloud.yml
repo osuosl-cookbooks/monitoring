@@ -37,6 +37,11 @@ platforms:
   driver_config:
     username: fedora
     image_ref: "Fedora 20"
+- name: fedora-21
+  driver_plugin: openstack
+  driver_config:
+    username: fedora
+    image_ref: "Fedora 21"
 
 suites:
   - name: default

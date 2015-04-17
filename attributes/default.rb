@@ -11,7 +11,7 @@ default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total
 # Override the defaults for our environment, specifically redhat systems.
 default['nagios']['client']['install_method'] = "package"
 case node['platform_family']
-when "rhel", "fedora"
+when 'rhel', 'fedora'
   nrpe_packages = %w(
     nrpe
     nagios-plugins
@@ -27,8 +27,13 @@ when "rhel", "fedora"
 
   default['nagios']['user'] = 'nrpe'
   default['nagios']['group'] = 'nrpe'
-  if node['platform_version'].to_i < 7 or node['platform_family'] == 'fedora'
+when 'rhel'
+  if node['platform_version'].to_i < 7
     nrpe_packages << 'nagios-plugins-linux_raid'
   end
-  default['nagios']['nrpe']['packages'] = nrpe_packages
+when 'fedora'
+  if node['platform_version'].to_i < 21
+    nrpe_packages << 'nagios-plugins-linux_raid'
+  end
 end
+default['nagios']['nrpe']['packages'] = nrpe_packages
