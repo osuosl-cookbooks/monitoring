@@ -27,12 +27,8 @@ when 'rhel', 'fedora'
 
   default['nagios']['user'] = 'nrpe'
   default['nagios']['group'] = 'nrpe'
-when 'rhel'
-  if node['platform_version'].to_i < 7
-    nrpe_packages << 'nagios-plugins-linux_raid'
-  end
-when 'fedora'
-  if node['platform_version'].to_i < 21
+  if (platform_family?('rhel') && node['platform_version'].to_i < 7) ||
+     (platform_family?('fedora') && node['platform_version'].to_i < 21)
     nrpe_packages << 'nagios-plugins-linux_raid'
   end
 end
