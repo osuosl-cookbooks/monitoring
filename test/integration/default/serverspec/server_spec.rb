@@ -18,6 +18,7 @@ set :backend, :exec
   end
 end
 
+# Only check for this package on older platforms that still support it
 if (os[:family] == 'rhel' && os[:release].to_i < 7) ||
    (os[:family] == 'fedora' && os[:release].to_i < 21)
   describe package('nagios-plugins-linux_raid') do
