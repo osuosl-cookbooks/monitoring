@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+package 'mdadm'
+
 drives = 2
 
 drives.times do |i|
