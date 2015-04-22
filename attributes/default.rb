@@ -31,6 +31,9 @@ when 'rhel', 'fedora'
   # so only install on older platforms
   md_plugin = value_for_platform(
     %w(redhat centos) => { '>= 7.0' => [] },
+    # This technically should be '21' however this works around the following
+    # bug and is a temporary fix until a newer chef-client is released:
+    # https://github.com/chef/chef/pull/3263
     'fedora' => { '>= 21.0' => [] },
     'default' => %w(nagios-plugins-linux_raid)
   )
