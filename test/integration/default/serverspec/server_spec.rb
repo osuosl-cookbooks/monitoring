@@ -2,6 +2,30 @@ require 'serverspec'
 
 set :backend, :exec
 
+%w(
+  nrpe
+  nagios-plugins
+  nagios-plugins-disk
+  nagios-plugins-dummy
+  nagios-plugins-load
+  nagios-plugins-mailq
+  nagios-plugins-ntp
+  nagios-plugins-procs
+  nagios-plugins-swap
+  nagios-plugins-users).each do |p|
+  describe package(p) do
+    it { should be_installed }
+  end
+end
+
+# Only check for this package on older platforms that still support it
+if (os[:family] == 'rhel' && os[:release].to_i < 7) ||
+   (os[:family] == 'fedora' && os[:release].to_i < 21)
+  describe package('nagios-plugins-linux_raid') do
+    it { should be_installed }
+  end
+end
+
 describe file('/etc/nagios/nrpe.d/check_load.cfg') do
   it { should contain('command[check_load]=/usr/lib64/nagios/plugins/check_load -w 12,7,2 -c 14,9,4') }
   it { should be_owned_by 'nrpe' }

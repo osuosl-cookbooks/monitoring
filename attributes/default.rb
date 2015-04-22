@@ -11,7 +11,7 @@ default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total
 # Override the defaults for our environment, specifically redhat systems.
 default['nagios']['client']['install_method'] = "package"
 case node['platform_family']
-when "rhel", "fedora"
+when 'rhel', 'fedora'
   nrpe_packages = %w(
     nrpe
     nagios-plugins
@@ -27,8 +27,16 @@ when "rhel", "fedora"
 
   default['nagios']['user'] = 'nrpe'
   default['nagios']['group'] = 'nrpe'
-  if node['platform_version'].to_i < 7 or node['platform_family'] == 'fedora'
-    nrpe_packages << 'nagios-plugins-linux_raid'
-  end
-  default['nagios']['nrpe']['packages'] = nrpe_packages
+  # The linux-raid check was removed in a newer version of the upstream package
+  # so only install on older platforms
+  md_plugin = value_for_platform(
+    %w(redhat centos) => { '>= 7.0' => [] },
+    # This technically should be '21' however this works around the following
+    # bug and is a temporary fix until a newer chef-client is released:
+    # https://github.com/chef/chef/pull/3263
+    'fedora' => { '>= 21.0' => [] },
+    'default' => %w(nagios-plugins-linux_raid)
+  )
+  nrpe_packages += md_plugin
 end
+default['nagios']['nrpe']['packages'] = nrpe_packages
