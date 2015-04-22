@@ -31,7 +31,7 @@ when 'rhel', 'fedora'
   # so only install on older platforms
   md_plugin = value_for_platform(
     %w(redhat centos) => { '>= 7.0' => [] },
-    'fedora' => { '>= 21' => [] },
+    'fedora' => { '>= 21.0' => [] },
     'default' => %w(nagios-plugins-linux_raid)
   )
   nrpe_packages += md_plugin
