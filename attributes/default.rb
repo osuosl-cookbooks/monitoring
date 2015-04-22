@@ -29,9 +29,11 @@ when 'rhel', 'fedora'
   default['nagios']['group'] = 'nrpe'
   # The linux-raid check was removed in a newer version of the upstream package
   # so only install on older platforms
-  if (platform_family?('rhel') && node['platform_version'].to_i < 7) ||
-     (platform_family?('fedora') && node['platform_version'].to_i < 21)
-    nrpe_packages << 'nagios-plugins-linux_raid'
-  end
+  md_plugin = value_for_platform(
+    %w(redhat centos) => { '>= 7.0' => [] },
+    'fedora' => { '>= 21' => [] },
+    'default' => %w(nagios-plugins-linux_raid)
+  )
+  nrpe_packages += md_plugin
 end
 default['nagios']['nrpe']['packages'] = nrpe_packages
