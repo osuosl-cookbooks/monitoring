@@ -86,7 +86,12 @@ suites:
       kernel:
         modules:
           mptctl:
+    excludes:
+      - centos-7.0
+      - fedora-20
   - name: raid-md
     run_list:
       - recipe[md-test]
       - recipe[monitoring::raid]
+    excludes:
+      - centos-7.0
