@@ -17,7 +17,9 @@
 # limitations under the License.
 #
 
-package 'mdadm'
+package 'mdadm' do
+  action :nothing
+end.run_action(:install)
 
 drives = 2
 
