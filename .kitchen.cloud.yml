@@ -72,6 +72,7 @@ suites:
           cciss:
     excludes:
       - fedora-20
+      - fedora-21
   - name: raid-megaraid
     run_list:
       - recipe[monitoring::raid]
@@ -89,9 +90,11 @@ suites:
     excludes:
       - centos-7.1
       - fedora-20
+      - fedora-21
   - name: raid-md
     run_list:
       - recipe[md-test]
       - recipe[monitoring::raid]
     excludes:
       - centos-7.1
+      - fedora-21
