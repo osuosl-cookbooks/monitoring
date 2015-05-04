@@ -94,11 +94,10 @@ if node['monitoring']['check_raid']
 
     # Copy over NRPE plugin (if applicable)
     pluginpath = File.join('nagios', 'plugins', plugin)
-    if run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath)
-      cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
-        source pluginpath
-        mode '775'
-      end
+    cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
+      source pluginpath
+      mode '775'
+      only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath) }
     end
 
     # Create NRPE check
