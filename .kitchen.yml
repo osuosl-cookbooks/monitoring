@@ -24,3 +24,46 @@ suites:
   - name: smtp
     run_list:
       - recipe[monitoring::smtp]
+  - name: raid-aac
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      kernel:
+        modules:
+          aacraid:
+  - name: raid-hp
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      kernel:
+        modules:
+          cciss:
+    excludes:
+      - fedora-20
+      - fedora-21
+  - name: raid-megaraid
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      kernel:
+        modules:
+          megaraid_sas:
+  - name: raid-mpt
+    run_list:
+      - recipe[monitoring::raid]
+    attributes:
+      kernel:
+        modules:
+          mptctl:
+    excludes:
+      - centos-7.1
+      - fedora-20
+      - fedora-21
+  - name: raid-md
+    run_list:
+      - recipe[md-test]
+      - recipe[monitoring::raid]
+    excludes:
+      - centos-6.6
+      - centos-7.1
+      - fedora-21

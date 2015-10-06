@@ -16,16 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "nagios::client_package"
-include_recipe "nagios::client"
+include_recipe 'nagios::client_package'
+include_recipe 'nagios::client'
 
-package "nagios-plugins-http" do
+package 'nagios-plugins-http' do
   action :install
 end
 
 # Check http
 check_vhost = node['monitoring']['check_vhost']
-nagios_nrpecheck "check_http" do
+nagios_nrpecheck 'check_http' do
   command "#{node['nagios']['plugin_dir']}/check_http"
   parameters "-H #{check_vhost['server_name']} -I #{check_vhost['ipaddress']}"
   action :add

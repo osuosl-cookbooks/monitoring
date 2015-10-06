@@ -7,5 +7,8 @@ describe package('nagios-plugins-http') do
 end
 
 describe file('/etc/nagios/nrpe.d/check_http.cfg') do
-  its(:content) { should match /command\[check_http\]=\/usr\/lib64\/nagios\/plugins\/check_http -H [a-z].+ -I [0-9].+/ }
+  its(:content) do
+    should match %r{command\[check_http\]=/usr/lib64/nagios/plugins/check_http\
+ -H [a-z].+ -I [0-9].+}
+  end
 end
