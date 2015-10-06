@@ -15,5 +15,8 @@ end
 
 # Check that the nrpe config exists
 describe file('/etc/nagios/nrpe.d/check_raid_md.cfg') do
-  its(:content) { should match %r{command\[check_raid_md\]=/usr/lib64/nagios/plugins/check_linux_raid} }
+  its(:content) do
+    should match %r{command\[check_raid_md\]=\
+/usr/lib64/nagios/plugins/check_linux_raid}
+  end
 end

@@ -1,15 +1,18 @@
-default['monitoring']['check_all_disks']['warning'] = "8%"
-default['monitoring']['check_all_disks']['critical'] = "5%"
-default['monitoring']['check_all_disks']['parameters'] = "-A -x /dev/shm -X nfs -X fuse.glusterfs -i /boot"
-default['monitoring']['check_swap']['warning'] = "15%"
-default['monitoring']['check_swap']['critical'] = "5%"
+default['monitoring']['check_all_disks']['warning'] = '8%'
+default['monitoring']['check_all_disks']['critical'] = '5%'
+default['monitoring']['check_all_disks']['parameters'] = \
+  '-A -x /dev/shm -X nfs -X fuse.glusterfs -i /boot'
+default['monitoring']['check_swap']['warning'] = '15%'
+default['monitoring']['check_swap']['critical'] = '5%'
 
 total_cpu = node['cpu']['total']
-default['monitoring']['check_load']['warning'] =  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
-default['monitoring']['check_load']['critical'] = "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"
+default['monitoring']['check_load']['warning'] = \
+  "#{total_cpu * 2 + 10},#{total_cpu * 2 + 5},#{total_cpu * 2}"
+default['monitoring']['check_load']['critical'] = \
+  "#{total_cpu * 4 + 10},#{total_cpu * 4 + 5},#{total_cpu * 4}"
 
 # Override the defaults for our environment, specifically redhat systems.
-default['nagios']['client']['install_method'] = "package"
+default['nagios']['client']['install_method'] = 'package'
 case node['platform_family']
 when 'rhel', 'fedora'
   nrpe_packages = %w(

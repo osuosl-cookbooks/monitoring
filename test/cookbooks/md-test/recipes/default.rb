@@ -24,14 +24,13 @@ end.run_action(:install)
 drives = 2
 
 drives.times do |i|
-  unless File.exist?("/root/raid-#{i}")
-    execute "dd if=/dev/zero of=/root/raid-#{i} bs=1M count=10" do
-      action :nothing
-    end.run_action(:run)
-    execute "losetup /dev/loop#{i} /root/raid-#{i}" do
-      action :nothing
-    end.run_action(:run)
-  end
+  next if File.exist?("/root/raid-#{i}")
+  execute "dd if=/dev/zero of=/root/raid-#{i} bs=1M count=10" do
+    action :nothing
+  end.run_action(:run)
+  execute "losetup /dev/loop#{i} /root/raid-#{i}" do
+    action :nothing
+  end.run_action(:run)
 end
 
 mdadm '/dev/md0' do

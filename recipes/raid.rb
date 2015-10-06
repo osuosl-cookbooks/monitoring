@@ -62,7 +62,8 @@ if node['monitoring']['check_raid']
   }
 
   # Try and detect the RAID check type automatically
-  raidtype = case
+  raidtype = \
+  case
   when node['kernel']['modules'].key?('aacraid')
     'aac'
   when node['kernel']['modules'].key?('megaraid_sas')
@@ -77,7 +78,8 @@ if node['monitoring']['check_raid']
 
   if raidtype.nil?
     # Don't do anything if we still don't have a RAID type
-    Chef::Log.warn('Could not detect RAID check type; not creating any Nagios RAID checks.')
+    Chef::Log.warn(\
+      'Could not detect RAID check type; not creating any Nagios RAID checks.')
   else
     Chef::Log.info("Creating Nagios RAID checks of type '#{raidtype}'.")
 
@@ -97,7 +99,9 @@ if node['monitoring']['check_raid']
     cookbook_file File.join(node['nagios']['plugin_dir'], plugin) do
       source pluginpath
       mode '775'
-      only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath) }
+      only_if do
+        run_context.has_cookbook_file_in_cookbook?(cookbook_name, pluginpath)
+      end
     end
 
     # Create NRPE check

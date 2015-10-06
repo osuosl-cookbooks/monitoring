@@ -15,5 +15,8 @@ end
 
 # Check that the nrpe config exists
 describe file('/etc/nagios/nrpe.d/check_raid_mpt.cfg') do
-  its(:content) { should match %r{command\[check_raid_mpt\]=/usr/lib64/nagios/plugins/check_mpt} }
+  its(:content) do
+    should match %r{command\[check_raid_mpt\]=\
+/usr/lib64/nagios/plugins/check_mpt}
+  end
 end

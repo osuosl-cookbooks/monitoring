@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "nagios::client_package"
-include_recipe "nagios::client"
+include_recipe 'nagios::client_package'
+include_recipe 'nagios::client'
 
 # Check for high load.  This check defines warning levels and attributes
 check_load = node['monitoring']['check_load']
-nagios_nrpecheck "check_load" do
+nagios_nrpecheck 'check_load' do
   command "#{node['nagios']['plugin_dir']}/check_load"
   warning_condition check_load['warning']
   critical_condition check_load['critical']
@@ -30,7 +30,7 @@ end
 
 # Check all non-NFS/tmp-fs disks.
 check_all_disks = node['monitoring']['check_all_disks']
-nagios_nrpecheck "check_all_disks" do
+nagios_nrpecheck 'check_all_disks' do
   command "#{node['nagios']['plugin_dir']}/check_disk"
   warning_condition check_all_disks['warning']
   critical_condition check_all_disks['critical']
@@ -40,14 +40,14 @@ end
 
 # Check for excessive users.  This command relies on the service definition to
 # define what the warning/critical levels and attributes are
-nagios_nrpecheck "check_users" do
+nagios_nrpecheck 'check_users' do
   command "#{node['nagios']['plugin_dir']}/check_users"
   action :remove
 end
 
 # Check for swap usage
 check_swap = node['monitoring']['check_swap']
-nagios_nrpecheck "check_swap" do
+nagios_nrpecheck 'check_swap' do
   command "#{node['nagios']['plugin_dir']}/check_swap"
   warning_condition check_swap['warning']
   critical_condition check_swap['critical']

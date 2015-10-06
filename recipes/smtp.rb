@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "nagios::client_package"
-include_recipe "nagios::client"
+include_recipe 'nagios::client_package'
+include_recipe 'nagios::client'
 
 check_mailq = node['monitoring']['check_mailq']
-nagios_nrpecheck "check_mailq" do
+nagios_nrpecheck 'check_mailq' do
   command "#{node['nagios']['plugin_dir']}/check_mailq"
   warning_condition check_mailq['warning']
   critical_condition check_mailq['critical']
