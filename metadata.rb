@@ -9,3 +9,8 @@ version          '0.2.9'
 depends          'munin'
 depends          'nagios'
 depends          'yum'
+
+supports         'centos', '~> 6'
+supports         'centos', '~> 7'
+supports         'fedora', '20'
+supports         'fedora', '21'
